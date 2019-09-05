@@ -6,66 +6,69 @@
         "vm1name": {
             "type": "string"
         },
-
         "location": {
             "defaultValue": "eastus2",
             "type": "string"
         },
-        
         "labcompname": {
             "type": "string"
         },
-        "availability setName": {
+        "availabilitysetName": {
             "type": "string",
             "minLength": 1
-          },
-
-          "NIC1": {
-              "defaultValue": "[resourceId('Resource-Group-1', 'Microsoft.Network/networkInterfaces', 'NIC1')]",
-              "type": "string"
-
-          },
-
-          "PIP": {
-              "defaultValue": "[resourceId('Resource-Group-1', 'Microsoft.Network/publicIPAddresses', 'PIP')]",
-              "type": "string"
-            }
-            
-            },
-        
-    "variables": {    },
-    "functions": [
-    ],
+        },
+        "storageaccount": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "NIC1": "[resourceId('Resource-Group-1', 'Microsoft.Network/networkInterfaces', 'NIC1')]"
+    },
+    "functions": [],
     "resources": [
         {
-
-         
-           "name": "[parameters('availability setName')]",
+            "name": "[parameters('availabilitysetName')]",
             "type": "Microsoft.Compute/availabilitySets",
             "location": "[resourceGroup().location]",
             "apiVersion": "2018-10-01",
-            "dependsOn": [],
             "tags": {
-                "displayName": "aVal"
+                "displayName": "as1"
             },
             "properties": {
                 "platformUpdateDomainCount": 1,
                 "platformFaultDomainCount": 1,
-                "virtualMachines": [],
-                "sku": {
-                    "name": "Aligned"
-                },
+                "virtualMachines": []
+            },
+            "sku": {
+                "name": "Aligned"
+            }
+        },
+        {
+            "name": "[parameters('storageaccount')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "sku":{
+                "name": "Standard_LRS"
+            },
+            "kind": "StorageV2",
+            "location":"East US 2",
+            "properties":{
+                
             }
         },
         
-        
-          { "apiVersion": "2019-03-01",
+        {
+            "apiVersion": "2019-03-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[parameters('vm1name')]",
             "location": "[parameters('location')]",
+            "tags": {
+                "displayName": "Finance"
+            },
             "dependsOn": [
-                "[parameters('NIC1')]"        
-            ],
+                "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitysetName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageaccount'))]"
+              ],
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "Standard_B2s"
@@ -89,26 +92,29 @@
                     "computerName": "[parameters('labcompname')]",
                     "adminUsername": "virtualLabAdmin",
                     "adminPassword": "P@$sW0rd2468",
-
                 },
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[parameters('NIC1')]"
+                            "id": "[variables('NIC1')]",
+                            "properties": {
+                                "primary": true
+                            }
                         }
                     ]
                 },
-                "publicIPAddress": {
-                    "id": "[parameters('PIP')]"
-                }
-                ,
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
-                      "enabled": true
-                     }
-                  }
+                        "enabled": true,
+                        "storageUri": "[reference(concat('Microsoft.Storage/storageAccounts/', parameters('storageaccount')), '2019-04-01').primaryEndpoints.blob]",
+                    }
+                },
+                "availabilitySet":{
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitysetName'))]"
+
+                }
             }
-        },
+        }
     ],
     "outputs": {}
 }

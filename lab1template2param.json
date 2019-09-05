@@ -3,13 +3,19 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vm1name": {
-            "value":"Virtual-Machine-1"
+            "value":"VM1"
         },
         "location":{
             "value":"eastus2"
         },
         "labcompname":{
-            "value": "mylabvm1computer"
+            "value": "labvm1com"
+        },
+        "storageaccount": {
+            "value": "iamcdosa01"
+        },
+        "availabilitysetName": {
+            "value": "as1"
         }
     }
 }
