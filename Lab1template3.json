@@ -3,41 +3,12 @@
     "contentVersion": "1.0.0.0",
     "apiProfile": "2019-07-01-profile",
     "parameters": {
-        "virtualNetwork": {
-            "type": "array",
-            "defaultValue": [
-                {
-                    "resourceGroupName": "Resource-Group-3",
-                    "resourceGroupLocation": "eastus2"
-                }
-            ],
-            "metadata": {
-                "description": "string for virtual network"
-            }
-        },
         "location": {
             "type": "string",
             "defaultValue": "eastus2"
         },
         "Subnets": {
-            "type": "array",
-            "defaultValue": [
-                {
-                    "resourceGroupName": "Resource-Group-3",
-                    "resourceGroupLocation": "eastus2",
-                    "name": "Subnet2"
-                }
-            ],
-            "metadata": {
-                "description": "string for virtual network"
-            }
-        },
-        "roleNameGuid": {
-            "type": "string",
-            "defaultValue": "[newGuid()]",
-            "metadata": {
-                "description": "A new GUID used to identify the role assignment"
-            }
+            "type": "array"
         },
         "principalId": {
             "type": "string",
@@ -53,7 +24,7 @@
             "name": "vNet2",
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-04-01",
-            "location": "[parameters('virtualNetwork')[0].resourceGroupLocation]",
+            "location": "[parameters('location')]",
             "tags": {},
             "properties": {
                 "addressSpace": {
@@ -98,16 +69,60 @@
             }
         },
         {
-            "name": "[parameters('roleNameGuid')]",
+            "name": "[Guid(resourceGroup().id, parameters('principalId'), 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2018-09-01-preview",
             "properties": {
-              "roleDefinitionId": "/providers/Microsoft.Authorization/roledefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
-              "principalId": "[parameters('principalId')]",
-              "principalType": "Group",
-              "scope": "[resourcegroup().id]"
+                "roleDefinitionId": "/providers/Microsoft.Authorization/roledefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+                "principalId": "[parameters('principalId')]",
+                "principalType": "Group",
+                "scope": "[resourcegroup().id]"
             }
-          }  
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-11-01",
+            "name": "NIC2",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+              "[resourceId('Microsoft.Network/virtualNetworks/', 'vNet2')]"
+            ],
+            "properties": {
+              "ipConfigurations": [
+                {
+                  "name": "ipconfig1",
+                  "properties": {
+                    "privateIPAllocationMethod": "Dynamic",
+                    "subnet": {
+                      "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'vnet2', 'Subnet2')]"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-11-01",
+            "name": "NIC3",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+              "[resourceId('Microsoft.Network/virtualNetworks/', 'vNet2')]"
+            ],
+            "properties": {
+              "ipConfigurations": [
+                {
+                  "name": "ipconfig1",
+                  "properties": {
+                    "privateIPAllocationMethod": "Dynamic",
+                    "subnet": {
+                      "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'vnet2', 'Subnet2')]"
+                    }
+                  }
+                }
+              ]
+            }
+          }
     ],
     "outputs": {}
 }
