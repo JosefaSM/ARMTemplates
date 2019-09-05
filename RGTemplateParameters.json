@@ -1,0 +1,38 @@
+
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceGroups": {
+            "value": [
+                {
+                "resourceGroupName": "Resource-Group-1",
+                "resourceGroupLocation":"eastus2"
+                },
+                {
+                "resourceGroupName": "Resource-Group-2",
+                "resourceGroupLocation":"eastus2"
+                },
+                {
+                "resourceGroupName": "Resource-Group-3",
+                "resourceGroupLocation":"eastus2"
+                },
+                {
+                "resourceGroupName": "Resource-Group-4",
+                "resourceGroupLocation":"eastus2"
+                },
+                {
+                "resourceGroupName": "Resource-Group-5",
+                "resourceGroupLocation":"eastus2"
+                },
+                {
+                "resourceGroupName": "Resource-Group-6",
+                "resourceGroupLocation":"eastus2"
+                }
+                
+            ]
+        }
+    }
+}
+

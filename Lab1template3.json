@@ -1,0 +1,89 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "apiProfile": "2019-07-01-profile",
+    "parameters": {
+        "virtualNetwork": {
+            "type": "array",
+            "defaultValue": [
+                {
+                    "resourceGroupName": "Resource-Group-3",
+                    "resourceGroupLocation": "eastus2"
+                }
+            ],
+            "metadata": {
+                "description": "string for virtual network"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "eastus2"
+        },
+        "Subnets": {
+            "type": "array",
+            "defaultValue": [
+                {
+                    "resourceGroupName": "Resource-Group-3",
+                    "resourceGroupLocation": "eastus2",
+                    "name": "Subnet2"
+                }
+            ],
+            "metadata": {
+                "description": "string for virtual network"
+            }
+        }
+    },
+    "variables": {},
+    "functions": [],
+    "resources": [
+        {
+            "name": "vNet2",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2019-04-01",
+            "location": "[parameters('virtualNetwork')[0].resourceGroupLocation]",
+            "tags": {},
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.1.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('Subnets')[0].name]",
+                        "type": "Microsoft.Network/virtualNetworks/subnets",
+                        "properties": {
+                            "addressPrefix": "10.1.0.0/24"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "NSG3",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-04-01",
+            "location": "eastus2",
+            "properties": {
+                "securityRules": [
+                    {
+                        "id": "nsg03",
+                        "properties": {
+                            "description": "nsg for vnet 2 and, subnet 2",
+                            "protocol": "*",
+                            "sourcePortRange": "3389",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "3389",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "priority": 100
+                        },
+                        "name": "secRules2"
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {}
+}

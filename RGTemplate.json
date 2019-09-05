@@ -1,0 +1,61 @@
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "apiProfile": "2019-07-01-profile",
+    "parameters": { 
+        "resourceGroups" : {
+            "type" : "array",
+            "defaultValue": [
+                {
+                    "resourceGroupName": "Resource-Group-1",
+                    "resourceGroupLocation": "eastus2"
+                },
+                {
+                    "resourceGroupName": "Resource-Group-2",
+                    "resourceGroupLocation": "eastus2"
+                },
+                {
+                    "resourceGroupName": "Resource-Group-3",
+                    "resourceGroupLocation": "eastus2"
+                },
+                {
+                    "resourceGroupName": "Resource-Group-4",
+                    "resourceGroupLocation": "eastus2"
+                },
+                {
+                    "resourceGroupName": "Resource-Group-5",
+                    "resourceGroupLocation": "eastus2"
+                },
+                {
+                    "resourceGroupName": "Resource-Group-6",
+                    "resourceGroupLocation": "eastus2"
+                }
+            ],
+            
+            "metadata": {
+              "description": "Array of resource objects"
+            }
+        }    
+     },
+    "variables": { 
+        }
+     ,
+    "functions": [  ],
+    "resources": [ 
+        {
+            "name": "[parameters('resourceGroups')[copyIndex()].resourceGroupName]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('resourceGroups')[copyIndex()].resourceGroupLocation]",
+            "tags": {},
+            "properties":{},
+            "copy": {
+                "name": "RGcopy",
+                "count": "[length(parameters('resourceGroups'))]"
+           }
+        },
+
+    ],
+    "outputs": {  }
+  }

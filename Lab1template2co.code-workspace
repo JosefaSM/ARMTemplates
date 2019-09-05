@@ -1,0 +1,114 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "apiProfile": "2018-06-01-profile",
+    "parameters": {
+        "vm1name": {
+            "type": "string"
+        },
+
+        "location": {
+            "defaultValue": "eastus2",
+            "type": "string"
+        },
+        
+        "labcompname": {
+            "type": "string"
+        },
+        "availability setName": {
+            "type": "string",
+            "minLength": 1
+          },
+
+          "NIC1": {
+              "defaultValue": "[resourceId('Resource-Group-1', 'Microsoft.Network/networkInterfaces', 'NIC1')]",
+              "type": "string"
+
+          },
+
+          "PIP": {
+              "defaultValue": "[resourceId('Resource-Group-1', 'Microsoft.Network/publicIPAddresses', 'PIP')]",
+              "type": "string"
+            }
+            
+            },
+        
+    "variables": {    },
+    "functions": [
+    ],
+    "resources": [
+        {
+
+         
+           "name": "[parameters('availability setName')]",
+            "type": "Microsoft.Compute/availabilitySets",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2018-10-01",
+            "dependsOn": [],
+            "tags": {
+                "displayName": "aVal"
+            },
+            "properties": {
+                "platformUpdateDomainCount": 1,
+                "platformFaultDomainCount": 1,
+                "virtualMachines": [],
+                "sku": {
+                    "name": "Aligned"
+                },
+            }
+        },
+        
+        
+          { "apiVersion": "2019-03-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('vm1name')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[parameters('NIC1')]"        
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_B2s"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "microsoftwindowsserver",
+                        "offer": "WindowsServer",
+                        "sku": "2019-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+                        },
+                        "disksizeGB": 127
+                    }
+                },
+                "osProfile": {
+                    "computerName": "[parameters('labcompname')]",
+                    "adminUsername": "virtualLabAdmin",
+                    "adminPassword": "P@$sW0rd2468",
+
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[parameters('NIC1')]"
+                        }
+                    ]
+                },
+                "publicIPAddress": {
+                    "id": "[parameters('PIP')]"
+                }
+                ,
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                      "enabled": true
+                     }
+                  }
+            }
+        },
+    ],
+    "outputs": {}
+}
