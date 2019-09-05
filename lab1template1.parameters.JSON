@@ -9,10 +9,6 @@
 
         "location": {
             "value": "eastus2"
-        },
-
-        "principalId": {
-            "value": "23e46b00-39c3-4db4-90e5-eb17521813be"
         }
     }
 }
