@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vm4name": {
+            "value":"VM4"
+        },
+        "vm5name": {
+            "value":"VM5"
+        },
+        "location":{
+            "value":"eastus2"
+        },
+        "labcompname4":{
+            "value": "labvm4com"
+        },
+        "labcompname5":{
+            "value": "labvm5com"
+        },
+        "storageaccount4": {
+            "value": "iamcdosa04"
+        },
+        "storageaccount5": {
+            "value": "iamcdosa05"
+        },
+        "availabilitysetName": {
+            "value": "as1"
+        },
+        "availabilitysetName2": {
+            "value": "as2"
+        }
+    }
+}

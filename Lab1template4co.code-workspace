@@ -1,0 +1,197 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "apiProfile": "2018-06-01-profile",
+    "parameters": {
+        "vm2name": {
+            "type": "string"
+        },
+        "vm3name": {
+            "type": "string"
+        },
+        "location": {
+            "defaultValue": "eastus2",
+            "type": "string"
+        },
+        "labcompname2": {
+            "type": "string"
+        },
+        "labcompname3": {
+            "type": "string"
+        },
+        "availabilitysetName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "storageaccount2": {
+            "type": "string"
+        },
+        "storageaccount3": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "NIC2": "[resourceId('Resource-Group-3', 'Microsoft.Network/networkInterfaces', 'NIC2')]",
+        "NIC3": "[resourceId('Resource-Group-3', 'Microsoft.Network/networkInterfaces', 'NIC3')]"
+    },
+    "functions": [],
+    "resources": [
+        //avalset
+        {
+            "name": "[parameters('availabilitysetName')]",
+            "type": "Microsoft.Compute/availabilitySets",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2018-10-01",
+            "tags": {
+                "displayName": "as2"
+            },
+            "properties": {
+                "platformUpdateDomainCount": 1,
+                "platformFaultDomainCount": 1,
+                "virtualMachines": []
+            },
+            "sku": {
+                "name": "Aligned"
+            }
+        },
+        //VM and storage account
+        {
+            "name": "[parameters('storageaccount2')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "StorageV2",
+            "location": "East US 2",
+            "properties": {}
+        },
+        {
+            "apiVersion": "2019-03-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('vm2name')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "displayName": "Finance"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitysetName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageaccount2'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_B2s"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "microsoftwindowsserver",
+                        "offer": "WindowsServer",
+                        "sku": "2019-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+                        },
+                        "disksizeGB": 127
+                    }
+                },
+                "osProfile": {
+                    "computerName": "[parameters('labcompname2')]",
+                    "adminUsername": "virtualLabAdmin",
+                    "adminPassword": "P@$sW0rd2468"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[variables('NIC2')]",
+                            "properties": {
+                                "primary": true
+                            }
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[reference(concat('Microsoft.Storage/storageAccounts/', parameters('storageaccount2')), '2019-04-01').primaryEndpoints.blob]"
+                    }
+                },
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitysetName'))]"
+                }
+            }
+        },
+        //VM and storage account 2
+        {
+            "name": "[parameters('storageaccount3')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "StorageV2",
+            "location": "East US 2",
+            "properties": {}
+        },
+        {
+            "apiVersion": "2019-03-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('vm3name')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "displayName": "HR"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitysetName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageaccount3'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_B2s"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "microsoftwindowsserver",
+                        "offer": "WindowsServer",
+                        "sku": "2019-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+                        },
+                        "disksizeGB": 127
+                    }
+                },
+                "osProfile": {
+                    "computerName": "[parameters('labcompname3')]",
+                    "adminUsername": "virtualLabAdmin",
+                    "adminPassword": "P@$sW0rd2468"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[variables('NIC3')]",
+                            "properties": {
+                                "primary": true
+                            }
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[reference(concat('Microsoft.Storage/storageAccounts/', parameters('storageaccount3')), '2019-04-01').primaryEndpoints.blob]"
+                    }
+                },
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitysetName'))]"
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
