@@ -15,7 +15,6 @@
                 "description": "string for virtual network"
             }
         },
-        
         "location": {
             "type": "string",
             "defaultValue": "eastus2"
@@ -31,6 +30,19 @@
             ],
             "metadata": {
                 "description": "string for virtual network"
+            }
+        },
+        "roleNameGuid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]",
+            "metadata": {
+                "description": "A new GUID used to identify the role assignment"
+            }
+        },
+        "principalId": {
+            "type": "string",
+            "metadata": {
+                "description": "The principal to assign the role to"
             }
         }
     },
@@ -84,7 +96,18 @@
                     }
                 ]
             }
-        }
+        },
+        {
+            "name": "[parameters('roleNameGuid')]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "properties": {
+              "roleDefinitionId": "/providers/Microsoft.Authorization/roledefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+              "principalId": "[parameters('principalId')]",
+              "principalType": "Group",
+              "scope": "[resourcegroup().id]"
+            }
+          }  
     ],
     "outputs": {}
 }
