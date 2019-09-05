@@ -15,6 +15,7 @@
                 "description": "string for virtual network"
             }
         },
+        
         "location": {
             "type": "string",
             "defaultValue": "eastus2"
